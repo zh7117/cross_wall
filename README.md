@@ -1,4 +1,4 @@
 
 
-crate socks proxy server on ubuntu and centos
+create socks proxy server on ubuntu and centos
 
