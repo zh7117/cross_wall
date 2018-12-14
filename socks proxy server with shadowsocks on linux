@@ -1,3 +1,5 @@
+"copied from https://www.linode.com/docs/networking/vpn/create-a-socks5-proxy-server-with-shadowsocks-on-ubuntu-and-centos7/"
+
 ubuntu 16.04
 
 #update 
@@ -81,3 +83,36 @@ net.ipv4.tcp_congestion_control = cubic
 
 #apply optimizations
 sysctl --system
+
+#create a shadowsocks systemd service
+sudo vi /etc/systemd/system/shadowsocks.service
+contents are:
+###########################################
+[Unit]
+Description=Shadowsocks proxy server
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/bin/ss-server -c /etc/shadowsocks/shadowsocks.json -a shadowsocks -v start
+ExecStop=/usr/local/bin/ss-server -c /etc/shadowsocks/shadowsocks.json -a shadowsocks -v stop
+
+[Install]
+WantedBy=multi-user.target
+#############################################
+
+#enable and start shadowsocks.service
+systemctl daemon-reload
+systemctl enable shadowsocks
+systemctl start shadowsocks
+
+#open firewall port for shadowsocks client
+iptables -4 -A INPUT -p tcp --dport 8388 -m comment --comment "Shadowsocks server listen port" -j ACCEPT
+
+firewall-cmd --permanent --zone=public --add-rich-rule='
+    rule family="ipv4"
+    port protocol="tcp" port="8388" accept'
+
+firewall-cmd --reload
+
