@@ -1,3 +1,4 @@
 # cross_wall
 
-tutorials of using shadowsocks to visit outer net.
+crate socks proxy server on ubuntu and centos
+
